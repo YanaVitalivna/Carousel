@@ -35,21 +35,24 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
 
-        self.collectionView.carouselDelegate = self
-        self.carouselLayout.carouselTheme = CarouselTheme()
+        collectionView.carouselDelegate = self
+        carouselLayout.carouselTheme = CarouselTheme()
 
-        self.fillCellModels()
+        fillCellModels()
 
     }
     
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return .all
+        .all
     }
     
     func fillCellModels(){
-        self.cellModels = []
+        cellModels = []
         let images = [#imageLiteral(resourceName: "Image"), #imageLiteral(resourceName: "Image-4"), #imageLiteral(resourceName: "Image-2"), #imageLiteral(resourceName: "Image-1"), #imageLiteral(resourceName: "Image-5"), #imageLiteral(resourceName: "Image-3")]
-        images.forEach({ self.cellModels.append( CellModel.init(image: $0)) })
+        
+        images.forEach{
+            cellModels.append( CellModel.init(image: $0))
+        }
         
     }
 }
@@ -59,13 +62,11 @@ class ViewController: UIViewController {
 extension ViewController: CarouselDelegate {
     
     func numberOfItemsInSection() -> Int {
-        return self.cellModels.count
+        cellModels.count
     }
     
     func cellForRowAtIndexPath(_ cell: CarouselViewCell, indexPath: IndexPath) {
-        
-        cell.fillInCell(image: self.cellModels[indexPath.row].image)
-
+        cell.fillInCell(image: cellModels[indexPath.row].image)
     }
     
     func didSelectItemAtIndexPath(_ indexPath: IndexPath) {

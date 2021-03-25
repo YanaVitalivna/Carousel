@@ -27,45 +27,56 @@ import UIKit
 
     var defaultTheme: CarouselAppearence = CarouselTheme()
     
-    @IBInspectable var scalingOffset: CGFloat = 0.0 {// if offsets >= scalingOffset scale factor will be minimumScaleFactor
+    @IBInspectable var scalingOffset: CGFloat = 0.0 { // if offsets >= scalingOffset scale factor will be minimumScaleFactor
         didSet{
-            guard self.scalingOffset >= 60 else { self.scalingOffset = 60; return }
+            guard scalingOffset >= 60 else {
+                scalingOffset = 60
+                return
+            }
         }
     }
     
     @IBInspectable var minScaleFactor: CGFloat = 0.0 { // minimum scale allowed for cell
         didSet{
             
-            guard self.minScaleFactor < 1 else { self.minScaleFactor = 1; return }
-            guard self.minScaleFactor > 0 else { self.minScaleFactor = 0; return }
+            guard minScaleFactor < 1 else {
+                minScaleFactor = 1
+                return
+            }
+            
+            guard minScaleFactor > 0 else {
+                minScaleFactor = 0
+                return
+            }
     
         }
     }
     
     @IBInspectable var minLineSpacing: CGFloat = 0.0 { // minimum line spacing
         didSet{
-            self.minimumLineSpacing = minLineSpacing
+            minimumLineSpacing = minLineSpacing
         }
     }
     
     @IBInspectable var verticalScrollDirection: Bool = true { // scroll direction
         didSet{
             if verticalScrollDirection {
-                self.scrollDirection = .vertical
-                self.flowLayoutCalculator = VerticalFlowLayoutCalculator(layout: self)
+                scrollDirection = .vertical
+                flowLayoutCalculator = VerticalFlowLayoutCalculator(layout: self)
                 
-            } else {
-                self.scrollDirection = .horizontal
-                self.flowLayoutCalculator = HorizontalFlowLayoutCalculator(layout: self)
+            }
+            else {
+                scrollDirection = .horizontal
+                flowLayoutCalculator = HorizontalFlowLayoutCalculator(layout: self)
             }
         }
     }
     
     @IBInspectable var cellSize: CGSize = CGSize.zero { // settings for item size (for scale = 1)
         didSet{
-            if !self.itemSize.equalTo(cellSize) {
-                self.itemSize = cellSize
-                self.invalidateLayout()
+            if itemSize.equalTo(cellSize) == false {
+                itemSize = cellSize
+                invalidateLayout()
             }
         }
     }
@@ -91,54 +102,54 @@ import UIKit
     
     public var carouselTheme: CarouselAppearence {
         get {
-           return defaultTheme
+           defaultTheme
         }
         set{
-            self.defaultTheme = newValue
-            self.set(theme: newValue)
+            defaultTheme = newValue
+            set(theme: newValue)
         }
     }
     
     public override init() {
         super.init()
         
-        self.settingForFlowLayoutCalculator()
+        settingForFlowLayoutCalculator()
     }
     
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         
-        self.settingForFlowLayoutCalculator()
+        settingForFlowLayoutCalculator()
     }
     
     func settingForFlowLayoutCalculator() {
-        self.flowLayoutCalculator = VerticalFlowLayoutCalculator(layout: self) // by default
+        flowLayoutCalculator = VerticalFlowLayoutCalculator(layout: self) // by default
     }
     
    // setup default theme for carousel flow
     private func set(theme: CarouselAppearence){
     
-        self.scalingOffset = self.defaultTheme.scalingOffset
-        self.minScaleFactor = self.defaultTheme.minScaleFactor
-        self.minLineSpacing = self.defaultTheme.minLineSpacing
-        self.verticalScrollDirection = self.defaultTheme.verticalScrollDirection
-        self.cellSize = self.defaultTheme.cellSize
+        scalingOffset = defaultTheme.scalingOffset
+        minScaleFactor = defaultTheme.minScaleFactor
+        minLineSpacing = defaultTheme.minLineSpacing
+        verticalScrollDirection = defaultTheme.verticalScrollDirection
+        cellSize = defaultTheme.cellSize
         
-        self.centeredCellCornerRadius = self.defaultTheme.centeredCellCornerRadius
-        self.centeredCellBorderWidth = self.defaultTheme.centeredCellBorderWidth
-        self.centeredCellBorderColor = self.defaultTheme.centeredCellBorderColor
-        self.centeredCellAlpha = self.defaultTheme.centeredCellAlpha
+        centeredCellCornerRadius = defaultTheme.centeredCellCornerRadius
+        centeredCellBorderWidth = defaultTheme.centeredCellBorderWidth
+        centeredCellBorderColor = defaultTheme.centeredCellBorderColor
+        centeredCellAlpha = defaultTheme.centeredCellAlpha
         
-        self.otherCellsCornerRadius = defaultTheme.otherCellsCornerRadius
-        self.otherCellsBorderWidth = self.defaultTheme.otherCellsBorderWidth
-        self.otherCellsBorderColor = defaultTheme.otherCellsBorderColor
-        self.otherCellsAlpha = self.defaultTheme.otherCellsAlpha
+        otherCellsCornerRadius = defaultTheme.otherCellsCornerRadius
+        otherCellsBorderWidth = defaultTheme.otherCellsBorderWidth
+        otherCellsBorderColor = defaultTheme.otherCellsBorderColor
+        otherCellsAlpha = defaultTheme.otherCellsAlpha
        
-        self.invalidateLayout()
+        invalidateLayout()
     }
       
     public func configureInset(){
-       self.flowLayoutCalculator.configureInsetCalculator()
+       flowLayoutCalculator.configureInsetCalculator()
     }
 
 }

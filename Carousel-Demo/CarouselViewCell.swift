@@ -34,13 +34,13 @@ class CarouselViewCell: UICollectionViewCell {
     }
     
     func fillInCell(image: UIImage){
-        self.imageView.image = image
+        imageView.image = image
     }
     
     override func prepareForReuse() {
-        self.contentScaleFactor = 0.1
-        self.layer.contentsScale = 0.1
-        self.imageView.image = nil
+        contentScaleFactor = 0.1
+        layer.contentsScale = 0.1
+        imageView.image = nil
 
     }
 
@@ -55,9 +55,9 @@ extension CarouselViewCell {
         super.apply(layoutAttributes)
         
         if let customAttr = layoutAttributes as? CarouselLayoutAttributes {
-            self.layer.borderWidth = customAttr.borderWidth
-            self.layer.cornerRadius = customAttr.cornerRadius
-            self.layer.borderColor = customAttr.borderColor.cgColor
+            layer.borderWidth = customAttr.borderWidth
+            layer.cornerRadius = customAttr.cornerRadius
+            layer.borderColor = customAttr.borderColor.cgColor
             
         }
     }

@@ -27,34 +27,40 @@ struct VerticalFlowLayoutCalculator: OrientationFlowLayoutCalculator {
     var carouselFlowLayout: CarouselFlowLayout
     
     init(layout: CarouselFlowLayout){
-        self.carouselFlowLayout = layout
+        carouselFlowLayout = layout
     }
     
     func configureInsetCalculator() {
-        guard self.carouselFlowLayout.collectionView != nil else { return }
+        guard carouselFlowLayout.collectionView != nil else {
+            return
+        }
         
-        let inset = self.carouselFlowLayout.collectionView!.bounds.size.height / 2 - self.carouselFlowLayout.itemSize.height / 2
-        self.carouselFlowLayout.collectionView!.contentInset = UIEdgeInsetsMake(inset, 0, inset, 0)
-        self.carouselFlowLayout.collectionView!.contentOffset = CGPoint(x: 0, y: -inset)
+        let inset = carouselFlowLayout.collectionView!.bounds.size.height / 2 - carouselFlowLayout.itemSize.height / 2
+        carouselFlowLayout.collectionView!.contentInset = UIEdgeInsets(top: inset, left: 0, bottom: inset, right: 0)
+        carouselFlowLayout.collectionView!.contentOffset = CGPoint(x: 0, y: -inset)
     }
     
     func getVisibleCenter(in visibleRect: CGRect) -> CGFloat {
-        return visibleRect.midY
+        visibleRect.midY
     }
     
     func getDistanceFromCenter(from visibleCenter: CGFloat, to newAttributes: CarouselLayoutAttributes) -> CGFloat {
-        return visibleCenter - newAttributes.center.y
+        visibleCenter - newAttributes.center.y
     }
    
     func targetContentOffsetForScrollDirection(_ proposedContentOffset: CGPoint, withScrollingVelocity velocity: CGPoint) -> CGPoint {
         
-        guard let collectionViewSize = self.carouselFlowLayout.collectionView?.bounds.size, self.carouselFlowLayout.collectionView != nil else { return proposedContentOffset }
+        guard let collectionViewSize = carouselFlowLayout.collectionView?.bounds.size,
+              carouselFlowLayout.collectionView != nil else {
+            
+            return proposedContentOffset
+        }
         
         let proposedRect = CGRect(x: 0, y: proposedContentOffset.y, width: collectionViewSize.width, height: collectionViewSize.height)
         
         // find attributes in proposed rectangle
         guard
-            let layoutAttributesArray = self.carouselFlowLayout.layoutAttributesForElements(in: proposedRect)?.filter({ $0.representedElementCategory == .cell }),
+            let layoutAttributesArray = carouselFlowLayout.layoutAttributesForElements(in: proposedRect)?.filter({ $0.representedElementCategory == .cell }),
             let firstCandidate = layoutAttributesArray.first
             else {
                 return proposedContentOffset
@@ -65,21 +71,23 @@ struct VerticalFlowLayoutCalculator: OrientationFlowLayoutCalculator {
         
         let candidateAttributes = layoutAttributesArray.reduce(firstCandidate) {
             
-            if fabs($1.center.y - proposedContentOffsetCenterY) < fabs($0.center.y - proposedContentOffsetCenterY) {
+            if abs($1.center.y - proposedContentOffsetCenterY) < abs($0.center.y - proposedContentOffsetCenterY) {
                 return $1
-            } else {
+            }
+            else {
                 return $0
             }
         }
         
-        var newOffsetY = candidateAttributes.center.y - self.carouselFlowLayout.collectionView!.bounds.size.height / 2
+        var newOffsetY = candidateAttributes.center.y - carouselFlowLayout.collectionView!.bounds.size.height / 2
         
-        let offsetY = newOffsetY - self.carouselFlowLayout.collectionView!.contentOffset.y
+        let offsetY = newOffsetY - carouselFlowLayout.collectionView!.contentOffset.y
         
         // paging for first and last item
-        if (velocity.y < 0 && offsetY > 0) || (velocity.y > 0 && offsetY < 0) {
+        if (velocity.y < 0 && offsetY > 0)
+            || (velocity.y > 0 && offsetY < 0) {
             
-            let pageHeight = self.carouselFlowLayout.itemSize.height + self.carouselFlowLayout.minimumLineSpacing
+            let pageHeight = carouselFlowLayout.itemSize.height + carouselFlowLayout.minimumLineSpacing
             newOffsetY += velocity.y > 0 ? pageHeight : -pageHeight
         }
         

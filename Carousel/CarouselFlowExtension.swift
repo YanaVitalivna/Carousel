@@ -30,32 +30,39 @@ extension CarouselFlowLayout {
     override public func invalidateLayout(with context: UICollectionViewLayoutInvalidationContext) {
         super.invalidateLayout(with: context)
         
-        guard let currentCollectionViewSize = self.collectionView?.bounds.size else{
+        guard let currentCollectionViewSize = collectionView?.bounds.size else{
             return
         }
         
-        if !currentCollectionViewSize.equalTo(self.lastCollectionViewSize) || !self.itemSize.equalTo(self.lastItemSize){
-            self.configureInset()
-            self.lastCollectionViewSize = currentCollectionViewSize
-            self.lastItemSize = self.itemSize
+        if currentCollectionViewSize.equalTo(lastCollectionViewSize) == false
+            || itemSize.equalTo(lastItemSize) == false {
+            
+            configureInset()
+            lastCollectionViewSize = currentCollectionViewSize
+            lastItemSize = itemSize
         }
     }
     
     public override func shouldInvalidateLayout(forBoundsChange newBounds: CGRect) -> Bool {
-        return true
+        true
     }
     
     public override func targetContentOffset(forProposedContentOffset proposedContentOffset: CGPoint, withScrollingVelocity velocity: CGPoint) -> CGPoint {
         
-        guard self.collectionView != nil else { return proposedContentOffset }
+        guard collectionView != nil else {
+            return proposedContentOffset
+        }
         
-        return self.flowLayoutCalculator.targetContentOffsetForScrollDirection(proposedContentOffset, withScrollingVelocity: velocity)
+        return flowLayoutCalculator.targetContentOffsetForScrollDirection(proposedContentOffset, withScrollingVelocity: velocity)
         
     }
     
     override public func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
         
-        guard  let contentOffset = self.collectionView?.contentOffset, let size = self.collectionView?.bounds.size, self.scaleItems else {
+        guard  let contentOffset = collectionView?.contentOffset,
+               let size = collectionView?.bounds.size,
+               scaleItems else {
+            
             return super.layoutAttributesForElements(in: rect)
         }
         
@@ -65,26 +72,26 @@ extension CarouselFlowLayout {
 
         let visibleRect = CGRect(x: contentOffset.x, y: contentOffset.y, width: size.width, height: size.height)
         
-        let visibleCenterYorX = self.flowLayoutCalculator.getVisibleCenter(in: visibleRect)
+        let visibleCenterYorX = flowLayoutCalculator.getVisibleCenter(in: visibleRect)
       // Y - for vertical scroll direction, X - for horizontal        
 
-        let newAttributesArray = superAttributes.flatMap { (superAttribute) -> CarouselLayoutAttributes? in
+        let newAttributesArray = superAttributes.compactMap { (superAttribute) -> CarouselLayoutAttributes? in
            
             guard let newAttributes = superAttribute.copy() as? CarouselLayoutAttributes else {
                 return nil
             }
             
-            let distanceFromCenter = self.flowLayoutCalculator.getDistanceFromCenter(from: visibleCenterYorX, to: newAttributes)
+            let distanceFromCenter = flowLayoutCalculator.getDistanceFromCenter(from: visibleCenterYorX, to: newAttributes)
             
             // calculate Item Scale
-            let scale = self.calculateItemScale(with: distanceFromCenter)
+            let scale = calculateItemScale(with: distanceFromCenter)
             
-            newAttributes.transform3D = CATransform3DScale(CATransform3DIdentity, scale, scale, self.maxScale)
+            newAttributes.transform3D = CATransform3DScale(CATransform3DIdentity, scale, scale, maxScale)
             
-            newAttributes.zIndex = self.zIndexForCenteredCell - Int(abs(distanceFromCenter)) // every next cell that have some distance from center should have smaller z-index.
+            newAttributes.zIndex = zIndexForCenteredCell - Int(abs(distanceFromCenter)) // every next cell that have some distance from center should have smaller z-index.
             
             // setting for cells view
-            self.settingsForCells(for: newAttributes, with: distanceFromCenter)
+            settingsForCells(for: newAttributes, with: distanceFromCenter)
             
             return newAttributes
         }
@@ -95,21 +102,20 @@ extension CarouselFlowLayout {
     
     func settingsForCells(for newAttributes: CarouselLayoutAttributes, with distanceFromCenter: CGFloat){
         
-        if abs(distanceFromCenter) > self.scalingOffset {
+        if abs(distanceFromCenter) > scalingOffset {
             
-            newAttributes.alpha = self.otherCellsAlpha // semi transparent cell
+            newAttributes.alpha = otherCellsAlpha // semi transparent cell
             
-            newAttributes.borderColor = self.otherCellsBorderColor
-            newAttributes.borderWidth = self.otherCellsBorderWidth
-            newAttributes.cornerRadius = self.otherCellsCornerRadius
+            newAttributes.borderColor = otherCellsBorderColor
+            newAttributes.borderWidth = otherCellsBorderWidth
+            newAttributes.cornerRadius = otherCellsCornerRadius
+        }
+        else {
+            newAttributes.alpha = centeredCellAlpha
             
-        } else {
-            
-            newAttributes.alpha = self.centeredCellAlpha
-            
-            newAttributes.borderColor = self.centeredCellBorderColor
-            newAttributes.borderWidth = self.centeredCellBorderWidth
-            newAttributes.cornerRadius = self.centeredCellCornerRadius
+            newAttributes.borderColor = centeredCellBorderColor
+            newAttributes.borderWidth = centeredCellBorderWidth
+            newAttributes.cornerRadius = centeredCellCornerRadius
             
         }
         
@@ -117,14 +123,14 @@ extension CarouselFlowLayout {
     
     func calculateItemScale(with distanceFromCenter: CGFloat) -> CGFloat{
         
-        let absDistanceFromCenter = min(abs(distanceFromCenter), self.scalingOffset)
+        let absDistanceFromCenter = min(abs(distanceFromCenter), scalingOffset)
         
         // if absDistanceFromCenter = 0, scale will be max
         
-        let distancesToCenterRatio = absDistanceFromCenter / self.scalingOffset // percentage ratio between current distance to center and max allowed distance to center.
+        let distancesToCenterRatio = absDistanceFromCenter / scalingOffset // percentage ratio between current distance to center and max allowed distance to center.
         
-        let max_minScaleDifference = self.maxScale - self.minScaleFactor // interval between min allowed scale and max
-        let scale = self.maxScale - distancesToCenterRatio * max_minScaleDifference
+        let max_minScaleDifference = maxScale - minScaleFactor // interval between min allowed scale and max
+        let scale = maxScale - distancesToCenterRatio * max_minScaleDifference
         
         return scale
     }

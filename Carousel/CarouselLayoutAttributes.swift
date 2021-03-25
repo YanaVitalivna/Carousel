@@ -33,17 +33,24 @@ public class CarouselLayoutAttributes: UICollectionViewLayoutAttributes {
         guard let copy = super.copy(with: zone) as? CarouselLayoutAttributes else {
             return super.copy(with: zone)
         }
-        copy.borderColor = self.borderColor
-        copy.borderWidth = self.borderWidth
-        copy.cornerRadius = self.cornerRadius
+        
+        copy.borderColor = borderColor
+        copy.borderWidth = borderWidth
+        copy.cornerRadius = cornerRadius
+        
         return copy
     }
     
     override public func isEqual(_ object: Any?) -> Bool {
         
-        guard let attributes = object as? CarouselLayoutAttributes else { return false }
+        guard let attributes = object as? CarouselLayoutAttributes else {
+            return false
+        }
         
-        guard self.borderColor == attributes.borderColor, self.borderWidth == attributes.borderWidth, self.cornerRadius == attributes.cornerRadius else {
+        guard borderColor == attributes.borderColor,
+              borderWidth == attributes.borderWidth,
+              cornerRadius == attributes.cornerRadius else {
+            
             return false
         }
         

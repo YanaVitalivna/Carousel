@@ -32,9 +32,9 @@ class CarouselTests: XCTestCase {
     override func setUp() {
         super.setUp()
         
-        self.carouselFlow = CarouselFlowLayout()
-        self.carouselFlow.carouselTheme = CarouselTheme()
-        self.collectionView = UICollectionView(frame: CGRect.init(x: 0, y: 0, width: 300, height: 500), collectionViewLayout: self.carouselFlow)
+        carouselFlow = CarouselFlowLayout()
+        carouselFlow.carouselTheme = CarouselTheme()
+        collectionView = UICollectionView(frame: CGRect.init(x: 0, y: 0, width: 300, height: 500), collectionViewLayout: self.carouselFlow)
         
     }
     
@@ -44,51 +44,51 @@ class CarouselTests: XCTestCase {
     }
     
     func test_CollectionViewIsNotNilAfterViewDidLoad() {
-       XCTAssertNotNil(self.carouselFlow.collectionView)
+       XCTAssertNotNil(carouselFlow.collectionView)
     }
     
     func test_ExpectedMinimumScaleFrom0() {
    
-        self.carouselFlow.carouselTheme.minScaleFactor = -12
-        XCTAssertEqual(self.carouselFlow.minScaleFactor, 0, "Minimum scale factor beyond the permissible values (from 0 to 1)")
+        carouselFlow.carouselTheme.minScaleFactor = -12
+        XCTAssertEqual(carouselFlow.minScaleFactor, 0, "Minimum scale factor beyond the permissible values (from 0 to 1)")
         
     }
     
     func test_ExpectedMinimumScaleTo1() {
         
-        self.carouselFlow.carouselTheme.minScaleFactor = 20
-        XCTAssertEqual(self.carouselFlow.minScaleFactor, 1, "Minimum scale factor beyond the permissible values (from 0 to 1)")
+        carouselFlow.carouselTheme.minScaleFactor = 20
+        XCTAssertEqual(carouselFlow.minScaleFactor, 1, "Minimum scale factor beyond the permissible values (from 0 to 1)")
        
     }
     
     func test_ExpectedScalingOffset() {
         
-        self.carouselFlow.carouselTheme.scalingOffset = 20
-        XCTAssertEqual(self.carouselFlow.scalingOffset, 60, "Minimum scale factor beyond the permissible values (from 0 to 1)")
+        carouselFlow.carouselTheme.scalingOffset = 20
+        XCTAssertEqual(carouselFlow.scalingOffset, 60, "Minimum scale factor beyond the permissible values (from 0 to 1)")
         
     }
     
     func test_ExpectedVisibleRectCenterYPosition() {
         
-        let contentOffset = self.collectionView.contentOffset
-        let size = self.collectionView.bounds.size
+        let contentOffset = collectionView.contentOffset
+        let size = collectionView.bounds.size
         let visibleRect = CGRect(x: contentOffset.x, y: contentOffset.y, width: size.width, height: size.height)
         
-        let visibleCenterY = self.carouselFlow.flowLayoutCalculator.getVisibleCenter(in: visibleRect)
-        let expectedVisibleCenterY = self.collectionView.center.y
+        let visibleCenterY = carouselFlow.flowLayoutCalculator.getVisibleCenter(in: visibleRect)
+        let expectedVisibleCenterY = collectionView.center.y
         
         XCTAssertEqual(visibleCenterY, expectedVisibleCenterY, "Visible centerY calculated wrong")
     }
     
     func test_ExpectedVisibleRectCenterXPosition() {
         
-        let contentOffset = self.collectionView.contentOffset
-        let size = self.collectionView.bounds.size
+        let contentOffset = collectionView.contentOffset
+        let size = collectionView.bounds.size
         let visibleRect = CGRect(x: contentOffset.x, y: contentOffset.y, width: size.width, height: size.height)
-        self.carouselFlow.flowLayoutCalculator = HorizontalFlowLayoutCalculator(layout: self.carouselFlow)
+        carouselFlow.flowLayoutCalculator = HorizontalFlowLayoutCalculator(layout: carouselFlow)
         
-        let visibleCenterX = self.carouselFlow.flowLayoutCalculator.getVisibleCenter(in: visibleRect)
-        let expectedVisibleCenterX = self.collectionView.center.x
+        let visibleCenterX = carouselFlow.flowLayoutCalculator.getVisibleCenter(in: visibleRect)
+        let expectedVisibleCenterX = collectionView.center.x
         
         XCTAssertEqual(visibleCenterX, expectedVisibleCenterX, "Visible centerY calculated wrong")
     }
@@ -97,10 +97,10 @@ class CarouselTests: XCTestCase {
         
         let currentDistanceFromCenter: CGFloat = 50
         
-        let scale = self.carouselFlow.calculateItemScale(with: currentDistanceFromCenter)
+        let scale = carouselFlow.calculateItemScale(with: currentDistanceFromCenter)
         let expectedScale: CGFloat = 0.75
         
-        XCTAssert(scale < self.carouselFlow.maxScale )
+        XCTAssert(scale < carouselFlow.maxScale )
         XCTAssertEqual(scale, expectedScale, "Scale calculated wrong")
     }
     
@@ -108,7 +108,7 @@ class CarouselTests: XCTestCase {
         
         let currentDistanceFromCenter: CGFloat = 0
         
-        let scale = self.carouselFlow.calculateItemScale(with: currentDistanceFromCenter)
+        let scale = carouselFlow.calculateItemScale(with: currentDistanceFromCenter)
         let expectedScale: CGFloat = 1
         
         XCTAssertEqual(scale, expectedScale, "Scale calculated wrong")
@@ -124,10 +124,10 @@ class CarouselTests: XCTestCase {
         attributes.borderColor = UIColor.green
         attributes.alpha = 0.5
         
-        let expectedCenteredCellBorderColor = self.carouselFlow.defaultTheme.centeredCellBorderColor
-        let expectedCenteredCellAlpha: CGFloat = self.carouselFlow.defaultTheme.centeredCellAlpha
+        let expectedCenteredCellBorderColor = carouselFlow.defaultTheme.centeredCellBorderColor
+        let expectedCenteredCellAlpha: CGFloat = carouselFlow.defaultTheme.centeredCellAlpha
         
-        self.carouselFlow.settingsForCells(for: attributes, with: currentDistanceFromCenter)
+        carouselFlow.settingsForCells(for: attributes, with: currentDistanceFromCenter)
         
         XCTAssertEqual(attributes.borderColor, expectedCenteredCellBorderColor, "BorderColor for centered cell calculated wrong")
         XCTAssertEqual(attributes.alpha, expectedCenteredCellAlpha, "Alpha for centered cell calculated wrong")
@@ -143,10 +143,10 @@ class CarouselTests: XCTestCase {
         attributes.borderColor = UIColor.green
         attributes.alpha = 1
      
-        let expectedOtherCellsBorderColor = self.carouselFlow.defaultTheme.otherCellsBorderColor
-        let expectedOtherCellsAlpha: CGFloat = self.carouselFlow.defaultTheme.otherCellsAlpha
+        let expectedOtherCellsBorderColor = carouselFlow.defaultTheme.otherCellsBorderColor
+        let expectedOtherCellsAlpha: CGFloat = carouselFlow.defaultTheme.otherCellsAlpha
         
-        self.carouselFlow.settingsForCells(for: attributes, with: currentDistanceFromCenter)
+        carouselFlow.settingsForCells(for: attributes, with: currentDistanceFromCenter)
         
         XCTAssertEqual(attributes.borderColor, expectedOtherCellsBorderColor, "BorderColor for other cells calculated wrong")
         XCTAssertEqual(attributes.alpha, expectedOtherCellsAlpha, "Alpha for other cells calculated wrong")

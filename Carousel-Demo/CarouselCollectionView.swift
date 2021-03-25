@@ -37,48 +37,47 @@ class CarouselCollectionView: UICollectionView {
     override init(frame: CGRect, collectionViewLayout layout: UICollectionViewLayout) {
         super.init(frame: frame, collectionViewLayout: layout)
         
-        self.collectionViewSettings()
+        collectionViewSettings()
     }
     
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         
-        self.collectionViewSettings()
+        collectionViewSettings()
     }
     
     func collectionViewSettings(){
   
-        self.decelerationRate = UIScrollViewDecelerationRateFast
+        decelerationRate = .fast
    
-        self.dataSource = self
-        self.delegate = self
-      
+        dataSource = self
+        delegate = self
     }
-    
-
 }
 
 extension CarouselCollectionView: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return carouselDelegate?.numberOfItemsInSection() ?? 0
-  
+        carouselDelegate?.numberOfItemsInSection() ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let collectionViewCell = collectionView.dequeueReusableCell(withReuseIdentifier: "CarouselViewCell", for: indexPath) as! CarouselViewCell
         
-        self.carouselDelegate?.cellForRowAtIndexPath(collectionViewCell, indexPath: indexPath)
+        carouselDelegate?.cellForRowAtIndexPath(collectionViewCell, indexPath: indexPath)
         
         return collectionViewCell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if collectionView.isDragging || collectionView.isDecelerating || collectionView.isTracking {
+        if collectionView.isDragging
+            || collectionView.isDecelerating
+            || collectionView.isTracking {
+            
             return
         }
         
-        self.carouselDelegate?.didSelectItemAtIndexPath(indexPath)
+        carouselDelegate?.didSelectItemAtIndexPath(indexPath)
     }
     
 }
